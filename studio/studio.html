@@ -1,0 +1,2040 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Content Studio</title>
+<style>
+:root {
+  --bg: #0d0d0d;
+  --surface: #1a1a1a;
+  --surface2: #222222;
+  --border: #2a2a2a;
+  --accent: #7c5cfc;
+  --accent-hover: #6a4ce0;
+  --text: #e8e8e8;
+  --muted: #888;
+  --success: #2ecc71;
+  --error: #e74c3c;
+  --warning: #f39c12;
+  --info: #3498db;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.header h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+.badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.header-right { margin-left: auto; color: var(--muted); font-size: 12px; }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 12px 16px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Main content */
+.main { padding: 24px; max-width: 1100px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-title { font-size: 15px; font-weight: 600; }
+.card-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* Client cards grid */
+.clients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.client-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.client-card:hover { border-color: var(--accent); }
+.client-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.client-card .meta { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.client-card .instagram { color: var(--accent); font-size: 12px; margin-top: 4px; }
+.client-card.active { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(124,92,252,0.3) inset; }
+
+/* Forms */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.form-grid.single { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+  padding: 8px 12px;
+  transition: border-color 0.15s;
+  outline: none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color: var(--accent); }
+.form-group textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+.form-group select { cursor: pointer; }
+
+/* Buttons */
+.btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 18px;
+  transition: background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--accent-hover); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-danger { background: var(--error); }
+.btn-success { background: var(--success); }
+
+/* Section title */
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  width: 640px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.modal-title { font-size: 16px; font-weight: 600; }
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 2px 6px;
+}
+.modal-close:hover { color: var(--text); }
+.modal-footer { margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end; }
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  max-width: 320px;
+  animation: slide-in 0.2s ease;
+}
+.toast.success { border-color: var(--success); color: var(--success); }
+.toast.error { border-color: var(--error); color: var(--error); }
+.toast.info { border-color: var(--info); color: var(--info); }
+@keyframes slide-in { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.status-pendente { background: rgba(243,156,18,0.15); color: var(--warning); }
+.status-concluido { background: rgba(46,204,113,0.15); color: var(--success); }
+.status-erro { background: rgba(231,76,60,0.15); color: var(--error); }
+.status-executando { background: rgba(124,92,252,0.15); color: var(--accent); }
+
+/* Jobs list */
+.jobs-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.job-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.job-item .job-meta { flex: 1; min-width: 0; }
+.job-item .job-title { font-size: 13px; font-weight: 600; }
+.job-item .job-brief { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.job-item .job-date { font-size: 11px; color: var(--muted); }
+.job-tipo {
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(124,92,252,0.1);
+  color: var(--accent);
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Files list */
+.files-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--surface2);
+  border-radius: 6px;
+  font-size: 12px;
+}
+.file-name { flex: 1; font-family: monospace; }
+.file-size { color: var(--muted); font-size: 11px; }
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.asset-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.asset-thumb {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #111;
+  margin-bottom: 8px;
+}
+.muted-note { font-size: 12px; color: var(--muted); }
+.quick-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.step-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.step-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.step-item strong { display:block; margin-bottom:4px; font-size:12px; color:var(--text); }
+
+/* Preview panel */
+.preview-panel {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+}
+.preview-content {
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre-wrap;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--muted);
+}
+.empty-state svg { margin-bottom: 12px; opacity: 0.4; }
+.empty-state p { font-size: 14px; margin-bottom: 16px; }
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* Row utilities */
+.row { display: flex; gap: 10px; align-items: center; }
+.row.between { justify-content: space-between; }
+.row.wrap { flex-wrap: wrap; }
+.input-with-action { display: flex; gap: 8px; align-items: center; }
+.input-with-action input { flex: 1; }
+.analysis-status { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.analysis-status.success { color: var(--success); }
+.analysis-status.warning { color: var(--warning); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>Social Content Studio</h1>
+  <span class="badge">MVP</span>
+  <span class="header-right">localhost:8766</span>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('clientes')">Clientes</button>
+  <button class="tab-btn" onclick="switchTab('auditoria')">Auditoria</button>
+  <button class="tab-btn" onclick="switchTab('novo-job')">Novo Job</button>
+  <button class="tab-btn" onclick="switchTab('jobs')">Jobs</button>
+  <button class="tab-btn" onclick="switchTab('preview')">Preview</button>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- ─── TAB: CLIENTES ─── -->
+  <div id="tab-clientes" class="tab-panel active">
+    <div class="row between" style="margin-bottom:16px">
+      <div>
+        <div class="card-title">Clientes</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Cadastro local por cliente</div>
+      </div>
+      <button class="btn" onclick="openModal('modal-novo-cliente')">+ Novo Cliente</button>
+    </div>
+
+    <div id="clients-list">
+      <div class="empty-state">
+        <p>Carregando clientes...</p>
+      </div>
+    </div>
+
+    <div id="client-detail-panel" class="card" style="display:none;margin-top:16px">
+      <div class="card-header">
+        <div>
+          <div class="card-title" id="client-detail-title">Cliente</div>
+          <div class="card-subtitle" id="client-detail-subtitle"></div>
+        </div>
+        <div class="quick-actions">
+          <button class="btn btn-ghost btn-sm" onclick="abrirClienteNaAuditoria()">Auditoria</button>
+          <button class="btn btn-ghost btn-sm" onclick="abrirClienteEmNovoJob()">Novo Job</button>
+          <button class="btn btn-ghost btn-sm" onclick="abrirClienteNosJobs()">Jobs</button>
+        </div>
+      </div>
+
+      <div class="form-grid" style="margin-bottom:16px">
+        <div class="form-group">
+          <label>Instagram</label>
+          <input type="text" id="client-detail-instagram" placeholder="usuario" />
+        </div>
+        <div class="form-group">
+          <label>Cidade</label>
+          <input type="text" id="client-detail-cidade" placeholder="Cidade - UF" />
+        </div>
+        <div class="form-group">
+          <label>Nicho</label>
+          <input type="text" id="client-detail-nicho" placeholder="Nicho" />
+        </div>
+        <div class="form-group">
+          <label>Produto</label>
+          <input type="text" id="client-detail-produto" placeholder="Produto principal" />
+        </div>
+        <div class="form-group full">
+          <label>Objetivo</label>
+          <input type="text" id="client-detail-objetivo" placeholder="Objetivo do cliente" />
+        </div>
+        <div class="form-group full">
+          <label>Cores</label>
+          <input type="text" id="client-detail-cores" placeholder="#FF6B35, #1A1A1A" />
+        </div>
+        <div class="form-group full">
+          <label>Fontes</label>
+          <input type="text" id="client-detail-fontes" placeholder="Montserrat Bold, Poppins" />
+        </div>
+        <div class="form-group full">
+          <label>Observações de identidade</label>
+          <textarea id="client-detail-identidade" rows="2" placeholder="Direção visual, referências e restrições"></textarea>
+        </div>
+      </div>
+
+      <div class="row" style="margin-bottom:20px">
+        <button class="btn btn-sm" onclick="salvarClienteDetalhe()">Salvar Cliente</button>
+      </div>
+
+      <div class="section-title">Assets</div>
+      <div class="muted-note" style="margin-bottom:10px">Envie logo, fotos de produto e referências visuais para o Studio usar nos jobs.</div>
+      <div class="row wrap" style="margin-bottom:12px">
+        <select id="asset-category" style="min-width:160px">
+          <option value="logo">Logo</option>
+          <option value="imagem">Foto / referência</option>
+          <option value="arquivo">Arquivo</option>
+        </select>
+        <input type="file" id="client-asset-input" multiple />
+        <button class="btn btn-sm" onclick="uploadClientAssets()">Enviar assets</button>
+      </div>
+      <div id="client-assets-list"></div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: AUDITORIA ─── -->
+  <div id="tab-auditoria" class="tab-panel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Auditoria de Perfil</div>
+          <div class="card-subtitle">Sempre manual e explícito. Nunca automático.</div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px">
+        <label>Cliente</label>
+        <select id="audit-client-select" onchange="loadAuditForClient(this.value)">
+          <option value="">-- Selecionar cliente --</option>
+        </select>
+      </div>
+
+      <div id="audit-form-area" style="display:none">
+        <div class="section-title">Dados do perfil</div>
+        <div class="form-grid" style="margin-bottom:16px">
+          <div class="form-group">
+            <label>Seguidores</label>
+            <input type="text" id="audit-seguidores" placeholder="ex: 1.200">
+          </div>
+          <div class="form-group">
+            <label>Frequência de posts</label>
+            <input type="text" id="audit-frequencia" placeholder="ex: 3x por semana">
+          </div>
+          <div class="form-group">
+            <label>Formatos usados (separados por vírgula)</label>
+            <input type="text" id="audit-formatos" placeholder="ex: reels, carrossel, stories">
+          </div>
+          <div class="form-group">
+            <label>Identidade visual atual</label>
+            <input type="text" id="audit-identidade" placeholder="ex: sem padrão, cores variadas">
+          </div>
+          <div class="form-group full">
+            <label>Diagnóstico do perfil</label>
+            <textarea id="audit-diagnostico" rows="3" placeholder="Descreva o estado atual do perfil..."></textarea>
+          </div>
+          <div class="form-group full">
+            <label>Padrões detectados (um por linha)</label>
+            <textarea id="audit-padroes" rows="2" placeholder="Padrão 1&#10;Padrão 2"></textarea>
+          </div>
+          <div class="form-group full">
+            <label>Erros visuais (um por linha)</label>
+            <textarea id="audit-erros" rows="2" placeholder="Erro 1&#10;Erro 2"></textarea>
+          </div>
+          <div class="form-group full">
+            <label>Oportunidades (uma por linha)</label>
+            <textarea id="audit-oportunidades" rows="3" placeholder="Oportunidade 1&#10;Oportunidade 2&#10;Oportunidade 3"></textarea>
+          </div>
+          <div class="form-group full">
+            <label>Linha visual sugerida</label>
+            <textarea id="audit-linha-visual" rows="2" placeholder="Descreva a identidade visual recomendada..."></textarea>
+          </div>
+          <div class="form-group full">
+            <label>Linha editorial sugerida</label>
+            <textarea id="audit-linha-editorial" rows="2" placeholder="Descreva os pilares de conteúdo recomendados..."></textarea>
+          </div>
+          <div class="form-group full">
+            <label>Observações de copy</label>
+            <textarea id="audit-obs-copy" rows="2" placeholder="Tom, objeções, linguagem do público..."></textarea>
+          </div>
+          <div class="form-group full">
+            <label>Observações criativo</label>
+            <textarea id="audit-obs-criativo" rows="2" placeholder="Referências visuais, estilo de foto, edição..."></textarea>
+          </div>
+        </div>
+
+        <div class="section-title">Concorrentes (opcional)</div>
+        <div class="form-grid" style="margin-bottom:16px">
+          <div class="form-group full">
+            <label>Concorrentes (JSON — ex: [{"arroba": "@concorrente1", "observacao": "..."}])</label>
+            <textarea id="audit-concorrentes" rows="3" placeholder='[{"arroba": "@concorrente1", "observacao": "muito forte em reels"}]'></textarea>
+          </div>
+        </div>
+
+        <div class="row" style="gap:10px">
+          <button class="btn" onclick="saveAudit()">Salvar Auditoria</button>
+          <button class="btn btn-ghost" id="btn-pre-audit" onclick="gerarPreAuditoria()">Gerar Pré-Auditoria (Toguro)</button>
+          <button class="btn btn-ghost" onclick="loadAuditForClient(document.getElementById('audit-client-select').value)">Recarregar</button>
+          <button class="btn btn-ghost" id="btn-resume-from-audit" onclick="reexecutarDaAuditoria()" style="display:none">Reexecutar da auditoria</button>
+        </div>
+        <div id="audit-pipeline-status" class="muted-note" style="margin-top:10px"></div>
+        <div id="audit-pipeline-state" class="muted-note" style="margin-top:8px"></div>
+
+        <div id="pre-audit-panel" style="margin-top:16px;display:none">
+          <hr class="divider">
+          <div class="row between" style="margin-bottom:8px">
+            <div class="section-title">Pré-auditoria gerada — validar antes de salvar</div>
+            <div class="row" style="gap:8px">
+              <button class="btn btn-sm" onclick="aplicarPreAuditoria()">Aplicar ao formulário</button>
+              <button class="btn btn-ghost btn-sm" onclick="aplicarPreAuditoriaESalvar()">Aplicar e salvar</button>
+            </div>
+          </div>
+          <div id="pre-audit-content" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:12px;font-family:monospace;white-space:pre-wrap;max-height:300px;overflow:auto;color:var(--text)"></div>
+          <div style="font-size:11px;color:var(--warning);margin-top:8px">Esta é uma sugestão inferida pelo Toguro sem acesso ao perfil real. Valide e edite antes de salvar.</div>
+        </div>
+
+        <div id="audit-current" style="margin-top:20px;display:none">
+          <hr class="divider">
+          <div class="section-title">Auditoria atual</div>
+          <pre id="audit-current-content" class="preview-content" style="max-height:300px"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: NOVO JOB ─── -->
+  <div id="tab-novo-job" class="tab-panel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Novo Job de Conteúdo</div>
+          <div class="card-subtitle">Selecione cliente, tipo, formato e gere a saída final</div>
+        </div>
+      </div>
+
+      <div class="step-list" style="margin-bottom:16px">
+        <div class="step-item"><strong>1. Cliente</strong><span class="muted-note">Escolha o cliente com Instagram, brand e assets.</span></div>
+        <div class="step-item"><strong>2. Tipo</strong><span class="muted-note">Post, carrossel ou reel pack.</span></div>
+        <div class="step-item"><strong>3. Formato</strong><span class="muted-note">Feed quadrado, retrato ou vertical.</span></div>
+        <div class="step-item"><strong>4. Saída</strong><span class="muted-note">Gere arquivos finais e abra o preview.</span></div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Cliente</label>
+          <select id="job-client-select" onchange="refreshJobClientStatus(this.value)">
+            <option value="">-- Selecionar cliente --</option>
+          </select>
+          <div id="job-client-status" class="muted-note" style="margin-top:8px"></div>
+          <div id="job-pipeline-state" class="muted-note" style="margin-top:8px"></div>
+        </div>
+        <div class="form-group">
+          <label>Tipo de conteúdo</label>
+          <select id="job-tipo">
+            <option value="">-- Selecionar tipo --</option>
+            <option value="carrossel">Carrossel</option>
+            <option value="post_estatico">Post Estático</option>
+            <option value="reel_pack">Reel Pack</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Formato final</label>
+          <select id="job-formato"></select>
+        </div>
+        <div class="form-group full">
+          <label>Briefing</label>
+          <textarea id="job-briefing" rows="4" placeholder="Descreva o que precisa ser criado. Ex: Carrossel sobre os 5 erros que delivery comete no iFood e como corrigi-los..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Objetivo do job</label>
+          <input type="text" id="job-objetivo" placeholder="ex: aumentar seguidores, gerar pedidos">
+        </div>
+        <div class="form-group">
+          <label>Tom específico (opcional)</label>
+          <input type="text" id="job-tom" placeholder="ex: mais direto, mais educativo">
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:20px;gap:10px">
+        <button class="btn" id="btn-criar-job" onclick="criarJob()">Criar Job</button>
+      </div>
+
+      <div id="job-output-hint" class="preview-panel" style="margin-top:16px">
+        <div class="section-title">Saída esperada</div>
+        <div id="job-output-hint-text" class="muted-note">Selecione o tipo de conteúdo para ver os arquivos finais esperados.</div>
+      </div>
+
+      <!-- Passo 2: Ângulos estratégicos -->
+      <div id="angulos-panel" style="margin-top:20px;display:none">
+        <hr class="divider">
+        <div class="row between" style="margin-bottom:12px">
+          <div>
+            <div class="section-title">Ângulos Estratégicos (Toguro)</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">Escolha o ângulo antes de executar</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="btn-gerar-angulos" onclick="gerarAngulos()">Gerar Ângulos</button>
+        </div>
+        <div id="angulos-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div id="angulo-selecionado-idx" style="display:none"></div>
+        <div style="margin-top:14px">
+          <button class="btn" id="btn-executar-com-angulo" onclick="executarComAngulo()" disabled>Executar com Ângulo Selecionado</button>
+          <button class="btn btn-ghost" style="margin-left:8px" onclick="executarComAngulo(true)">Executar sem Ângulo</button>
+        </div>
+      </div>
+
+      <div id="job-result" style="margin-top:16px;display:none"></div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: JOBS ─── -->
+  <div id="tab-jobs" class="tab-panel">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Jobs</div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px">
+        <label>Cliente</label>
+        <select id="jobs-client-select" onchange="loadJobsForClient(this.value)">
+          <option value="">-- Selecionar cliente --</option>
+        </select>
+      </div>
+
+      <div id="jobs-list-area">
+        <div class="empty-state">
+          <p>Selecione um cliente para ver os jobs.</p>
+        </div>
+      </div>
+      <div id="jobs-pipeline-state" class="muted-note" style="margin-top:12px"></div>
+    </div>
+
+    <!-- Painel de detalhes do job -->
+    <div id="job-detail-panel" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title" id="detail-job-title">Detalhes do Job</div>
+            <div class="card-subtitle" id="detail-job-subtitle"></div>
+          </div>
+          <div class="row" style="gap:8px">
+            <span id="detail-job-status" class="status-badge"></span>
+            <button class="btn btn-sm" id="btn-executar-job" onclick="executarJobDetail()">Executar</button>
+            <button class="btn btn-ghost btn-sm" id="btn-resume-job-audit" onclick="reexecutarDaAuditoria(currentDetailClientId, currentDetailJobId)">Reexecutar da auditoria</button>
+          </div>
+          <div id="detail-job-error" class="muted-note error" style="margin-top:8px;display:none"></div>
+        </div>
+        <div id="detail-job-pipeline" class="muted-note" style="margin-top:8px"></div>
+
+        <div id="detail-job-files">
+          <div class="section-title">Arquivos gerados</div>
+          <div id="files-list-area" class="files-list"></div>
+        </div>
+
+        <!-- Registro de resultado -->
+        <div id="detail-resultado-panel" style="margin-top:20px">
+          <hr class="divider">
+          <div class="row between" style="margin-bottom:12px">
+            <div class="section-title">Registrar Resultado</div>
+            <button class="btn btn-ghost btn-sm" onclick="toggleResultadoForm()">+ Registrar</button>
+          </div>
+          <div id="resultado-form" style="display:none">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Preencha o que tiver. Rates são calculados automaticamente.</div>
+            <div class="form-grid" style="margin-bottom:12px">
+              <div class="form-group"><label>Alcance</label><input type="number" id="res-alcance" placeholder="0"></div>
+              <div class="form-group"><label>Impressões</label><input type="number" id="res-impressoes" placeholder="0"></div>
+              <div class="form-group"><label>Curtidas</label><input type="number" id="res-curtidas" placeholder="0"></div>
+              <div class="form-group"><label>Comentários</label><input type="number" id="res-comentarios" placeholder="0"></div>
+              <div class="form-group"><label>Salvamentos</label><input type="number" id="res-salvamentos" placeholder="0"></div>
+              <div class="form-group"><label>Compartilhamentos</label><input type="number" id="res-compartilhamentos" placeholder="0"></div>
+              <div class="form-group"><label>Cliques no link</label><input type="number" id="res-cliques" placeholder="0"></div>
+              <div class="form-group"><label>Conversões</label><input type="number" id="res-conversoes" placeholder="pedidos/mensagens/compras"></div>
+              <div class="form-group"><label>Tipo de conversão</label><input type="text" id="res-tipo-conversao" placeholder="ex: pedido, mensagem, compra"></div>
+              <div class="form-group"><label>Publicado em</label><input type="date" id="res-publicado-em"></div>
+              <div class="form-group full"><label>Observações do operador</label><textarea id="res-notas" rows="2" placeholder="O que funcionou, o que não funcionou, contexto..."></textarea></div>
+            </div>
+            <button class="btn btn-sm" onclick="salvarResultado()">Salvar Resultado</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: PREVIEW ─── -->
+  <div id="tab-preview" class="tab-panel">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Preview de Arquivo</div>
+        <div class="card-subtitle">Visualize o conteúdo gerado</div>
+      </div>
+
+      <div class="form-grid" style="margin-bottom:16px">
+        <div class="form-group">
+          <label>Cliente</label>
+          <select id="preview-client-select" onchange="loadPreviewJobs(this.value)">
+            <option value="">-- Selecionar cliente --</option>
+          </select>
+          <div id="preview-pipeline-state" class="muted-note" style="margin-top:8px"></div>
+        </div>
+        <div class="form-group">
+          <label>Job</label>
+          <select id="preview-job-select" onchange="loadPreviewFiles(this.value)">
+            <option value="">-- Selecionar job --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Arquivo</label>
+          <select id="preview-file-select" onchange="loadPreviewContent()">
+            <option value="">-- Selecionar arquivo --</option>
+          </select>
+        </div>
+        <div class="form-group" style="justify-content:flex-end;flex-direction:row;align-items:flex-end">
+          <button class="btn btn-ghost btn-sm" onclick="downloadPreviewFile()">Download</button>
+        </div>
+      </div>
+
+      <div id="preview-content-area" class="preview-panel" style="display:none">
+        <pre id="preview-text" class="preview-content"></pre>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ─── MODAL: NOVO CLIENTE ─── -->
+<div id="modal-novo-cliente" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Novo Cliente</div>
+      <button class="modal-close" onclick="closeModal('modal-novo-cliente')">&times;</button>
+    </div>
+
+    <div class="section-title" style="margin-bottom:14px">Dados básicos</div>
+    <div class="form-grid" style="margin-bottom:16px">
+      <div class="form-group">
+        <label>Nome *</label>
+        <input type="text" id="nc-nome" placeholder="ex: Delivery do João">
+      </div>
+      <div class="form-group">
+        <label>Instagram</label>
+        <div class="input-with-action">
+          <input type="text" id="nc-instagram" placeholder="@usuario (sem @)" oninput="resetIdentityAnalysisStatus()">
+          <button class="btn btn-ghost btn-sm" id="btn-analisar-instagram" onclick="analisarInstagramIdentidade()">Analisar</button>
+        </div>
+        <div id="nc-analysis-status" class="analysis-status">Preencha um @usuario e clique em Analisar para sugerir cores, fonte e estilo.</div>
+      </div>
+      <div class="form-group">
+        <label>Nicho</label>
+        <input type="text" id="nc-nicho" placeholder="ex: delivery, restaurante, lanche">
+      </div>
+      <div class="form-group">
+        <label>Produto principal</label>
+        <input type="text" id="nc-produto" placeholder="ex: hamburguer artesanal">
+      </div>
+      <div class="form-group">
+        <label>Cidade</label>
+        <input type="text" id="nc-cidade" placeholder="ex: Campinas - SP">
+      </div>
+      <div class="form-group">
+        <label>Tom de voz</label>
+        <input type="text" id="nc-tom" placeholder="ex: informal, direto, descontraído">
+      </div>
+      <div class="form-group full">
+        <label>Objetivo</label>
+        <input type="text" id="nc-objetivo" placeholder="ex: reduzir dependência do iFood, aumentar pedidos diretos">
+      </div>
+      <div class="form-group full">
+        <label>Observações</label>
+        <textarea id="nc-observacoes" rows="2" placeholder="Informações relevantes sobre o negócio..."></textarea>
+      </div>
+      <div class="form-group full">
+        <label>Concorrentes (um por linha)</label>
+        <textarea id="nc-concorrentes" rows="2" placeholder="@concorrente1&#10;@concorrente2"></textarea>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:14px">Identidade visual</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Cores (hex separados por vírgula)</label>
+        <input type="text" id="nc-cores" placeholder="#FF6B35, #2C2C2C">
+      </div>
+      <div class="form-group">
+        <label>Fontes</label>
+        <input type="text" id="nc-fontes" placeholder="ex: Montserrat Bold, Roboto">
+      </div>
+      <div class="form-group full">
+        <label>Observações de identidade</label>
+        <textarea id="nc-obs-identidade" rows="2" placeholder="Estilo visual, referências, restrições..."></textarea>
+      </div>
+    </div>
+
+    <div class="muted-note" style="margin-top:14px">Logo e fotos podem ser enviados logo após criar o cliente, no painel de detalhes de cliente.</div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-novo-cliente')">Cancelar</button>
+      <button class="btn" onclick="criarCliente()">Criar Cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const API = 'http://localhost:8766/api';
+let currentDetailClientId = null;
+let currentDetailJobId = null;
+let currentClientPanelId = null;
+let _formatsCache = null;
+let identityAnalysisMeta = null;
+const _auditDirtyState = {};
+const _auditFingerprints = {};
+
+function _updateAuditFingerprint(clientId, audit) {
+  if (!clientId) return;
+  _auditFingerprints[clientId] = JSON.stringify(audit || {});
+  _auditDirtyState[clientId] = false;
+}
+
+function _markAuditDirty(clientId, dirty = true) {
+  if (!clientId) return;
+  _auditDirtyState[clientId] = !!dirty;
+}
+
+function _isAuditDirty(clientId) {
+  return !!_auditDirtyState[clientId];
+}
+
+function _ensureAuditSaved(clientId) {
+  if (!clientId) return true;
+  if (_isAuditDirty(clientId)) {
+    toast('Salve a auditoria antes de continuar.', 'error');
+    return false;
+  }
+  return true;
+}
+
+const JOB_FORMAT_OPTIONS = {
+  carrossel: ['feed_square'],
+  post_estatico: ['feed_square', 'feed_portrait'],
+  reel_pack: ['reel_vertical'],
+};
+
+const JOB_OUTPUT_HINTS = {
+  carrossel: 'Saída esperada: copy dos slides, legenda, CTA, visual brief e arquivos do carrossel.',
+  post_estatico: 'Saída esperada: conceito/copy, legenda, CTA, visual brief e peça estática.',
+  reel_pack: 'Saída esperada: roteiro, captions, thumbnail brief, CTA e manifest de edição.',
+};
+
+// ─── Utils ───────────────────────────────────────────────────────────────────
+
+function toast(msg, type = 'info') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(`tab-${name}`).classList.add('active');
+
+  if (name === 'auditoria') populateClientSelect('audit-client-select');
+  if (name === 'novo-job') populateClientSelect('job-client-select');
+  if (name === 'jobs') populateClientSelect('jobs-client-select');
+  if (name === 'preview') populateClientSelect('preview-client-select');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function fmtDate(ts) {
+  if (!ts) return '';
+  try {
+    return new Date(ts).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  } catch { return ts; }
+}
+
+function fmtBytes(b) {
+  if (b < 1024) return `${b}B`;
+  if (b < 1024*1024) return `${(b/1024).toFixed(1)}KB`;
+  return `${(b/(1024*1024)).toFixed(1)}MB`;
+}
+
+function normalizeInstagramValue(value) {
+  return String(value || '').trim().replace(/^@+/, '');
+}
+
+function setIdentityAnalysisStatus(message, type = '') {
+  const el = document.getElementById('nc-analysis-status');
+  if (!el) return;
+  el.className = `analysis-status${type ? ' ' + type : ''}`;
+  el.textContent = message;
+}
+
+function resetIdentityAnalysisStatus() {
+  identityAnalysisMeta = null;
+  setIdentityAnalysisStatus('Instagram alterado. Clique em Analisar para atualizar as sugestões.');
+}
+
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(API + path, opts);
+  const data = await r.json();
+  if (data.erro) throw new Error(data.erro);
+  return data;
+}
+
+async function fetchFormats() {
+  if (_formatsCache) return _formatsCache;
+  try {
+    _formatsCache = await api('GET', '/formats');
+  } catch(e) {
+    _formatsCache = {};
+  }
+  return _formatsCache;
+}
+
+// ─── Clientes ────────────────────────────────────────────────────────────────
+
+async function analisarInstagramIdentidade() {
+  const instagram = normalizeInstagramValue(document.getElementById('nc-instagram').value);
+  if (!instagram) {
+    toast('Informe um Instagram para analisar.', 'error');
+    return;
+  }
+ 
+  const btn = document.getElementById('btn-analisar-instagram');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Analisando...';
+  setIdentityAnalysisStatus(`Analisando @${instagram}...`);
+
+  try {
+    const analysis = await api('POST', '/identity/analyze', { instagram });
+    identityAnalysisMeta = analysis;
+
+    document.getElementById('nc-cores').value = (analysis.cores || []).join(', ');
+    document.getElementById('nc-fontes').value = analysis.fonte || '';
+    document.getElementById('nc-obs-identidade').value = [
+      analysis.observacoes || '',
+      analysis.estilo ? `estilo inferido: ${analysis.estilo}` : '',
+    ].filter(Boolean).join(' | ');
+
+    if (analysis.fallback) {
+      setIdentityAnalysisStatus('Análise indisponível; fallback padrão aplicado. Você ainda pode editar os campos manualmente.', 'warning');
+      toast('Fallback de identidade aplicado.', 'info');
+    } else {
+      setIdentityAnalysisStatus(`Sugestões aplicadas para @${instagram} com ${analysis.imagens_analisadas || 0} referências simuladas.`, 'success');
+      toast('Identidade visual sugerida e aplicada.', 'success');
+    }
+  } catch(e) {
+    setIdentityAnalysisStatus('Falha ao analisar. Preencha manualmente e siga com a criação.');
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = original;
+  }
+}
+
+async function loadClients() {
+  try {
+    const clients = await api('GET', '/clients');
+    const el = document.getElementById('clients-list');
+    if (!clients.length) {
+      el.innerHTML = `<div class="empty-state"><p>Nenhum cliente cadastrado ainda.</p><button class="btn" onclick="openModal('modal-novo-cliente')">+ Criar primeiro cliente</button></div>`;
+      return;
+    }
+    el.innerHTML = `<div class="clients-grid">${clients.map(c => `
+      <div class="client-card ${currentClientPanelId === c.id ? 'active' : ''}" onclick="openClientDetail('${c.id}')">
+        <h3>${c.nome}</h3>
+        <div class="meta">
+          ${c.nicho ? `<span>${c.nicho}</span>` : ''}
+          ${c.cidade ? ` · ${c.cidade}` : ''}
+        </div>
+        ${c.instagram ? `<div class="instagram">@${c.instagram}</div>` : ''}
+        <div class="meta" style="margin-top:6px;font-size:11px">${c.objetivo || ''}</div>
+      </div>
+    `).join('')}</div>`;
+  } catch(e) {
+    document.getElementById('clients-list').innerHTML = `<div class="empty-state"><p style="color:var(--error)">${e.message}</p></div>`;
+  }
+}
+
+async function populateClientSelect(selectId) {
+  try {
+    const clients = await api('GET', '/clients');
+    const sel = document.getElementById(selectId);
+    const current = sel.value;
+    sel.innerHTML = '<option value="">-- Selecionar cliente --</option>' +
+      clients.map(c => `<option value="${c.id}" ${c.id === current ? 'selected' : ''}>${c.nome}</option>`).join('');
+  } catch(e) { /* silencioso */ }
+}
+
+function openClientDetail(id) {
+  currentClientPanelId = id;
+  loadClients();
+  loadClientPanel(id);
+}
+
+async function loadClientPanel(clientId) {
+  const panel = document.getElementById('client-detail-panel');
+  if (!clientId) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  try {
+    const bundle = await api('GET', `/clients/${clientId}/bundle`);
+    const client = bundle.client || {};
+    const brand = bundle.brand || {};
+
+    currentClientPanelId = clientId;
+    panel.style.display = 'block';
+    document.getElementById('client-detail-title').textContent = client.nome || clientId;
+    document.getElementById('client-detail-subtitle').textContent = client.objetivo || client.nicho || '';
+    document.getElementById('client-detail-instagram').value = client.instagram || '';
+    document.getElementById('client-detail-cidade').value = client.cidade || '';
+    document.getElementById('client-detail-nicho').value = client.nicho || '';
+    document.getElementById('client-detail-produto').value = client.produto || '';
+    document.getElementById('client-detail-objetivo').value = client.objetivo || '';
+    document.getElementById('client-detail-cores').value = (brand.cores || []).join(', ');
+    document.getElementById('client-detail-fontes').value = (brand.fontes || []).join(', ');
+    document.getElementById('client-detail-identidade').value = brand.observacoes_identidade || '';
+
+    renderClientAssets(bundle.assets || []);
+  } catch(e) {
+    toast(e.message, 'error');
+    panel.style.display = 'none';
+  }
+}
+
+function _pipelineStatusMessage(status, mode = 'audit') {
+  if (!status) return '';
+  if (status.brand_ready) {
+    return mode === 'job'
+      ? 'Cliente pronto para Novo Job: identidade visual persistida e legível pelo pipeline.'
+      : 'Pipeline consolidado: auditoria e identidade visual já estão persistidas para uso no job.';
+  }
+  if (status.audit_ready) {
+    return 'Auditoria salva, mas a identidade visual ainda não foi consolidada em brand.json.';
+  }
+  if (status.has_instagram) {
+    return 'Cliente ainda depende de derivação pelo Instagram para fechar a identidade visual.';
+  }
+  return (status.blockers || []).join(' ') || 'Cliente ainda sem contexto mínimo para o pipeline.';
+}
+
+function _renderPipelineState(state, targetId) {
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  if (!state) {
+    el.textContent = '';
+    return;
+  }
+  const etapas = (state.etapas_concluidas || []).join(' -> ') || 'nenhuma';
+  el.textContent = `Etapa atual: ${state.etapa_atual || '—'} | Concluídas: ${etapas} | Próximo passo: ${state.proximo_passo_sugerido || '—'}`;
+}
+
+async function refreshClientPipelineStatus(clientId, targetId, mode = 'audit') {
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  if (!clientId) {
+    el.textContent = '';
+    _renderPipelineState(null, mode === 'job' ? 'job-pipeline-state' : mode === 'preview' ? 'preview-pipeline-state' : mode === 'jobs' ? 'jobs-pipeline-state' : 'audit-pipeline-state');
+    return;
+  }
+  try {
+    const bundle = await api('GET', `/clients/${clientId}/bundle`);
+    const status = bundle.pipeline_status || {};
+    const state = bundle.pipeline_state || {};
+    const ready = !!status.brand_ready;
+    el.textContent = _pipelineStatusMessage(status, mode);
+    el.style.color = ready ? 'var(--success)' : 'var(--warning)';
+    const stateTarget = mode === 'job'
+      ? 'job-pipeline-state'
+      : mode === 'preview'
+        ? 'preview-pipeline-state'
+        : mode === 'jobs'
+          ? 'jobs-pipeline-state'
+          : 'audit-pipeline-state';
+    _renderPipelineState(state, stateTarget);
+    const resumeButton = document.getElementById('btn-resume-from-audit');
+    if (resumeButton && mode === 'audit') {
+      resumeButton.style.display = state.job_id_ativo ? 'inline-flex' : 'none';
+    }
+  } catch (e) {
+    el.textContent = e.message;
+    el.style.color = 'var(--error)';
+  }
+}
+
+function renderClientAssets(assets) {
+  const el = document.getElementById('client-assets-list');
+  if (!assets.length) {
+    el.innerHTML = '<div class="muted-note">Nenhum asset enviado ainda.</div>';
+    return;
+  }
+
+  el.innerHTML = `<div class="asset-grid">${assets.map(a => {
+    const url = `${API}/clients/${currentClientPanelId}/asset/${encodeURIComponent(a.nome)}`;
+    const thumb = a.mime && a.mime.startsWith('image/')
+      ? `<img src="${url}" alt="${a.nome}" class="asset-thumb" />`
+      : `<div class="asset-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--muted)">arquivo</div>`;
+    return `
+      <div class="asset-card">
+        ${thumb}
+        <div style="font-size:12px;font-weight:600;word-break:break-word">${a.nome}</div>
+        <div class="muted-note" style="margin-top:4px">${a.categoria || 'asset'} · ${fmtBytes(a.tamanho || 0)}</div>
+        <div style="margin-top:8px">
+          <a href="${url}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">Abrir</a>
+        </div>
+      </div>`;
+  }).join('')}</div>`;
+}
+
+async function salvarClienteDetalhe() {
+  if (!currentClientPanelId) {
+    toast('Selecione um cliente.', 'error');
+    return;
+  }
+
+  const payload = {
+    instagram: document.getElementById('client-detail-instagram').value.trim().replace('@', ''),
+    cidade: document.getElementById('client-detail-cidade').value.trim(),
+    nicho: document.getElementById('client-detail-nicho').value.trim(),
+    produto: document.getElementById('client-detail-produto').value.trim(),
+    objetivo: document.getElementById('client-detail-objetivo').value.trim(),
+  };
+
+  const brandPayload = {
+    cores: document.getElementById('client-detail-cores').value.trim().split(',').map(v => v.trim()).filter(Boolean),
+    fontes: document.getElementById('client-detail-fontes').value.trim().split(',').map(v => v.trim()).filter(Boolean),
+    observacoes_identidade: document.getElementById('client-detail-identidade').value.trim(),
+  };
+
+  try {
+    await api('PUT', `/clients/${currentClientPanelId}`, payload);
+    await api('PUT', `/clients/${currentClientPanelId}/brand`, brandPayload);
+    toast('Cliente atualizado.', 'success');
+    await loadClients();
+    await loadClientPanel(currentClientPanelId);
+  } catch(e) {
+    toast(e.message, 'error');
+  }
+}
+
+async function uploadClientAssets() {
+  if (!currentClientPanelId) {
+    toast('Selecione um cliente.', 'error');
+    return;
+  }
+
+  const input = document.getElementById('client-asset-input');
+  const files = Array.from(input.files || []);
+  if (!files.length) {
+    toast('Selecione pelo menos um arquivo.', 'error');
+    return;
+  }
+
+  const category = document.getElementById('asset-category').value || 'imagem';
+
+  try {
+    for (const file of files) {
+      const form = new FormData();
+      form.append('file', file, file.name);
+      form.append('category', category);
+
+      const r = await fetch(`${API}/clients/${currentClientPanelId}/assets`, {
+        method: 'POST',
+        body: form,
+      });
+      const data = await r.json();
+      if (!r.ok || data.erro) {
+        throw new Error(data.erro || `Falha ao enviar ${file.name}`);
+      }
+    }
+
+    input.value = '';
+    toast('Assets enviados com sucesso.', 'success');
+    await loadClientPanel(currentClientPanelId);
+  } catch(e) {
+    toast(e.message, 'error');
+  }
+}
+
+function abrirClienteNaAuditoria() {
+  if (!currentClientPanelId) return;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===1));
+  document.querySelectorAll('.tab-panel').forEach((p,i) => p.classList.toggle('active', i===1));
+  populateClientSelect('audit-client-select').then(() => {
+    document.getElementById('audit-client-select').value = currentClientPanelId;
+    loadAuditForClient(currentClientPanelId);
+  });
+}
+
+function abrirClienteEmNovoJob() {
+  if (!currentClientPanelId) return;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===2));
+  document.querySelectorAll('.tab-panel').forEach((p,i) => p.classList.toggle('active', i===2));
+  populateClientSelect('job-client-select').then(() => {
+    document.getElementById('job-client-select').value = currentClientPanelId;
+    refreshJobClientStatus(currentClientPanelId);
+  });
+}
+
+function abrirClienteNosJobs() {
+  if (!currentClientPanelId) return;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===3));
+  document.querySelectorAll('.tab-panel').forEach((p,i) => p.classList.toggle('active', i===3));
+  populateClientSelect('jobs-client-select').then(() => {
+    document.getElementById('jobs-client-select').value = currentClientPanelId;
+    loadJobsForClient(currentClientPanelId);
+  });
+}
+
+async function criarCliente() {
+  const nome = document.getElementById('nc-nome').value.trim();
+  if (!nome) { toast('Nome é obrigatório.', 'error'); return; }
+
+  const concorrentesRaw = document.getElementById('nc-concorrentes').value.trim();
+  const concorrentes = concorrentesRaw ? concorrentesRaw.split('\n').filter(l => l.trim()).map(l => l.trim()) : [];
+
+  const coresRaw = document.getElementById('nc-cores').value.trim();
+  const cores = coresRaw ? coresRaw.split(',').map(c => c.trim()).filter(Boolean) : [];
+  const fontesRaw = document.getElementById('nc-fontes').value.trim();
+  const fontes = fontesRaw ? fontesRaw.split(',').map(f => f.trim()).filter(Boolean) : [];
+
+  const payload = {
+    nome,
+    instagram: document.getElementById('nc-instagram').value.trim().replace('@',''),
+    nicho: document.getElementById('nc-nicho').value.trim(),
+    produto: document.getElementById('nc-produto').value.trim(),
+    cidade: document.getElementById('nc-cidade').value.trim(),
+    tom_voz: document.getElementById('nc-tom').value.trim(),
+    objetivo: document.getElementById('nc-objetivo').value.trim(),
+    observacoes: document.getElementById('nc-observacoes').value.trim(),
+    concorrentes,
+    cores,
+    fontes,
+    observacoes_identidade: document.getElementById('nc-obs-identidade').value.trim(),
+  };
+
+  try {
+    await api('POST', '/clients', payload);
+    toast(`Cliente "${nome}" criado com sucesso.`, 'success');
+    closeModal('modal-novo-cliente');
+    identityAnalysisMeta = null;
+    setIdentityAnalysisStatus('Preencha um @usuario e clique em Analisar para sugerir cores, fonte e estilo.');
+    // Limpar form
+    ['nc-nome','nc-instagram','nc-nicho','nc-produto','nc-cidade','nc-tom','nc-objetivo','nc-observacoes','nc-concorrentes','nc-cores','nc-fontes','nc-obs-identidade'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    loadClients();
+  } catch(e) {
+    toast(e.message, 'error');
+  }
+}
+
+// ─── Auditoria ────────────────────────────────────────────────────────────────
+
+async function loadAuditForClient(clientId) {
+  const area = document.getElementById('audit-form-area');
+  const currentDiv = document.getElementById('audit-current');
+  if (!clientId) { area.style.display = 'none'; return; }
+  area.style.display = 'block';
+  refreshClientPipelineStatus(clientId, 'audit-pipeline-status', 'audit');
+
+  let audit = null;
+  try {
+    audit = await api('GET', `/clients/${clientId}/audit`);
+    if (audit && audit.diagnostico_perfil) {
+      _preAuditData = audit;
+      _updateAuditFingerprint(clientId, audit);
+      currentDiv.style.display = 'block';
+      document.getElementById('audit-current-content').textContent = JSON.stringify(audit, null, 2);
+      // Preencher form
+      document.getElementById('audit-seguidores').value = audit.seguidores || '';
+      document.getElementById('audit-frequencia').value = audit.frequencia_posts || '';
+      document.getElementById('audit-formatos').value = (audit.formatos_usados || []).join(', ');
+      document.getElementById('audit-identidade').value = audit.identidade_visual_atual || '';
+      document.getElementById('audit-diagnostico').value = audit.diagnostico_perfil || '';
+      document.getElementById('audit-padroes').value = (audit.padroes_detectados || []).join('\n');
+      document.getElementById('audit-erros').value = (audit.erros_visuais || []).join('\n');
+      document.getElementById('audit-oportunidades').value = (audit.oportunidades || []).join('\n');
+      document.getElementById('audit-linha-visual').value = audit.linha_visual_sugerida || '';
+      document.getElementById('audit-linha-editorial').value = audit.linha_editorial_sugerida || '';
+      document.getElementById('audit-obs-copy').value = audit.observacoes_copy || '';
+      document.getElementById('audit-obs-criativo').value = audit.observacoes_criativo || '';
+    } else {
+      currentDiv.style.display = 'none';
+    }
+    if (!_auditFingerprints[clientId]) {
+      _updateAuditFingerprint(clientId, audit || {});
+    }
+  } catch(e) {
+    currentDiv.style.display = 'none';
+  }
+}
+
+async function saveAudit() {
+  const clientId = document.getElementById('audit-client-select').value;
+  if (!clientId) { toast('Selecione um cliente.', 'error'); return; }
+
+  const toLines = val => val.split('\n').map(l => l.trim()).filter(Boolean);
+  const toList = val => val.split(',').map(l => l.trim()).filter(Boolean);
+
+  let concorrentes = [];
+  try {
+    const raw = document.getElementById('audit-concorrentes').value.trim();
+    if (raw) concorrentes = JSON.parse(raw);
+  } catch { toast('JSON de concorrentes inválido.', 'error'); return; }
+
+  const payload = {
+    seguidores: document.getElementById('audit-seguidores').value.trim(),
+    frequencia_posts: document.getElementById('audit-frequencia').value.trim(),
+    formatos_usados: toList(document.getElementById('audit-formatos').value),
+    identidade_visual_atual: document.getElementById('audit-identidade').value.trim(),
+    diagnostico_perfil: document.getElementById('audit-diagnostico').value.trim(),
+    padroes_detectados: toLines(document.getElementById('audit-padroes').value),
+    erros_visuais: toLines(document.getElementById('audit-erros').value),
+    oportunidades: toLines(document.getElementById('audit-oportunidades').value),
+    linha_visual_sugerida: document.getElementById('audit-linha-visual').value.trim(),
+    linha_editorial_sugerida: document.getElementById('audit-linha-editorial').value.trim(),
+    observacoes_copy: document.getElementById('audit-obs-copy').value.trim(),
+    observacoes_criativo: document.getElementById('audit-obs-criativo').value.trim(),
+    concorrentes,
+  };
+
+  try {
+    const audit = await api('PUT', `/clients/${clientId}/audit`, payload);
+    _preAuditData = audit;
+    _updateAuditFingerprint(clientId, audit);
+    toast('Auditoria salva com sucesso.', 'success');
+    await loadAuditForClient(clientId);
+    if (currentClientPanelId === clientId) {
+      await loadClientPanel(clientId);
+    }
+    await refreshJobClientStatus(clientId);
+    await refreshClientPipelineStatus(clientId, 'jobs-pipeline-state', 'jobs');
+    await refreshClientPipelineStatus(clientId, 'preview-pipeline-state', 'preview');
+    return audit;
+  } catch(e) {
+    toast(e.message, 'error');
+    throw e;
+  }
+}
+
+// ─── Jobs ─────────────────────────────────────────────────────────────────────
+
+// ─── Pré-Auditoria (Toguro) ───────────────────────────────────────────────────
+
+let _preAuditData = null;
+
+async function gerarPreAuditoria() {
+  const clientId = document.getElementById('audit-client-select').value;
+  if (!clientId) { toast('Selecione um cliente.', 'error'); return; }
+
+  const btn = document.getElementById('btn-pre-audit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Toguro analisando...';
+  const panel = document.getElementById('pre-audit-panel');
+  panel.style.display = 'none';
+
+  try {
+    toast('Toguro gerando pré-auditoria...', 'info');
+    _preAuditData = await api('POST', `/clients/${clientId}/audit/pre`, {});
+    const el = document.getElementById('pre-audit-content');
+    el.textContent = JSON.stringify(_preAuditData, null, 2);
+    panel.style.display = 'block';
+    toast('Pré-auditoria gerada. Valide e aplique ao formulário.', 'success');
+  } catch(e) {
+    toast(`Erro: ${e.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Gerar Pré-Auditoria (Toguro)';
+  }
+}
+
+function aplicarPreAuditoria() {
+  if (!_preAuditData) return;
+  const d = _preAuditData;
+  const clientId = document.getElementById('audit-client-select').value;
+  if (clientId) {
+    _markAuditDirty(clientId, true);
+  }
+  document.getElementById('audit-diagnostico').value = d.diagnostico_perfil || '';
+  document.getElementById('audit-padroes').value = (d.padroes_detectados || []).join('\n');
+  document.getElementById('audit-erros').value = (d.erros_visuais || []).join('\n');
+  document.getElementById('audit-oportunidades').value = (d.oportunidades || []).join('\n');
+  document.getElementById('audit-linha-visual').value = d.linha_visual_sugerida || '';
+  document.getElementById('audit-linha-editorial').value = d.linha_editorial_sugerida || '';
+  document.getElementById('audit-obs-copy').value = d.observacoes_copy || '';
+  toast('Pré-auditoria aplicada ao formulário. Revise e salve.', 'success');
+  document.getElementById('audit-form-area').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function aplicarPreAuditoriaESalvar() {
+  aplicarPreAuditoria();
+  await saveAudit();
+}
+
+async function refreshJobClientStatus(clientId) {
+  await refreshClientPipelineStatus(clientId, 'job-client-status', 'job');
+}
+
+async function reexecutarDaAuditoria(clientId = null, jobId = null) {
+  const resolvedClientId = clientId || document.getElementById('audit-client-select').value;
+  if (!resolvedClientId) {
+    toast('Selecione um cliente para retomar o pipeline.', 'error');
+    return;
+  }
+  try {
+    if (!_ensureAuditSaved(resolvedClientId)) return;
+    const resumed = await api('POST', `/clients/${resolvedClientId}/pipeline/resume`, {
+      stage: 'auditoria',
+      job_id: jobId || '',
+    });
+    if (resumed.result && resumed.result.erro) {
+      throw new Error(resumed.result.erro);
+    }
+    toast(`Pipeline retomado a partir da auditoria no job ${resumed.job_id}.`, 'success');
+    await refreshClientPipelineStatus(resolvedClientId, 'audit-pipeline-status', 'audit');
+    await refreshJobClientStatus(resolvedClientId);
+    await refreshClientPipelineStatus(resolvedClientId, 'jobs-pipeline-state', 'jobs');
+    if (document.getElementById('jobs-client-select').value === resolvedClientId) {
+      await loadJobsForClient(resolvedClientId);
+    }
+    if (currentDetailClientId === resolvedClientId && resumed.job_id) {
+      await openJobDetail(resolvedClientId, resumed.job_id);
+    }
+    if (document.getElementById('preview-client-select').value === resolvedClientId) {
+      await loadPreviewJobs(resolvedClientId);
+    }
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+// ─── Jobs — fluxo com ângulos ─────────────────────────────────────────────────
+
+let _currentJobClientId = null;
+let _currentJobId = null;
+let _anguloSelecionado = null;
+
+async function populateJobFormats() {
+  const sel = document.getElementById('job-formato');
+  if (!sel) return;
+
+  const formats = await fetchFormats();
+  const tipo = document.getElementById('job-tipo').value;
+  const allowed = JOB_FORMAT_OPTIONS[tipo] || [];
+
+  sel.innerHTML = '<option value="">-- Selecionar formato --</option>';
+  for (const key of allowed) {
+    const label = formats[key]?.label || key;
+    sel.innerHTML += `<option value="${key}">${label}</option>`;
+  }
+}
+
+function updateJobOutputHint() {
+  const tipo = document.getElementById('job-tipo').value;
+  document.getElementById('job-output-hint-text').textContent =
+    JOB_OUTPUT_HINTS[tipo] || 'Selecione o tipo de conteúdo para ver os arquivos finais esperados.';
+}
+
+async function criarJob() {
+  const clientId = document.getElementById('job-client-select').value;
+  const tipo = document.getElementById('job-tipo').value;
+  const formato = document.getElementById('job-formato').value;
+  const briefing = document.getElementById('job-briefing').value.trim();
+
+  if (!clientId) { toast('Selecione um cliente.', 'error'); return; }
+  if (!_ensureAuditSaved(clientId)) return;
+  if (!tipo) { toast('Selecione o tipo de conteúdo.', 'error'); return; }
+  if (!formato) { toast('Selecione o formato final.', 'error'); return; }
+  if (!briefing) { toast('Briefing é obrigatório.', 'error'); return; }
+
+  const payload = {
+    tipo,
+    formato,
+    briefing,
+    objetivo_job: document.getElementById('job-objetivo').value.trim(),
+    tom_especifico: document.getElementById('job-tom').value.trim(),
+  };
+
+  const btn = document.getElementById('btn-criar-job');
+  btn.disabled = true;
+
+  try {
+    const job = await api('POST', `/clients/${clientId}/jobs`, payload);
+    _currentJobClientId = clientId;
+    _currentJobId = job.id;
+    _anguloSelecionado = null;
+
+    toast(`Job criado: ${job.id}`, 'success');
+
+    // Mostrar painel de ângulos
+    const panel = document.getElementById('angulos-panel');
+    panel.style.display = 'block';
+    document.getElementById('angulos-list').innerHTML = `
+      <div style="color:var(--muted);font-size:13px">Job criado. Clique em "Gerar Ângulos" para o Toguro sugerir 3 ângulos estratégicos, ou execute diretamente.</div>`;
+    document.getElementById('btn-executar-com-angulo').disabled = false;
+
+    // Limpar form
+    document.getElementById('job-formato').value = '';
+    document.getElementById('job-briefing').value = '';
+    document.getElementById('job-objetivo').value = '';
+    document.getElementById('job-tom').value = '';
+    updateJobOutputHint();
+    await refreshJobClientStatus(clientId);
+    await refreshClientPipelineStatus(clientId, 'jobs-pipeline-state', 'jobs');
+
+  } catch(e) {
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function gerarAngulos() {
+  if (!_currentJobClientId || !_currentJobId) { toast('Crie um job primeiro.', 'error'); return; }
+  if (!_ensureAuditSaved(_currentJobClientId)) return;
+
+  const btn = document.getElementById('btn-gerar-angulos');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Toguro pensando...';
+  document.getElementById('angulos-list').innerHTML = '<div style="color:var(--muted);font-size:13px">Toguro gerando ângulos estratégicos...</div>';
+
+  try {
+    const result = await api('POST', `/clients/${_currentJobClientId}/jobs/${_currentJobId}/angles`, {});
+    const angulos = result.angulos || [];
+    const plano = result.plano || {};
+
+    if (!angulos.length) {
+      document.getElementById('angulos-list').innerHTML = '<div style="color:var(--error)">Nenhum ângulo gerado. Tente novamente.</div>';
+      return;
+    }
+
+    // Mostra flags do Bruxo se houver
+    let flagsHtml = '';
+    if (plano.flags && plano.flags.length) {
+      flagsHtml = `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:12px;font-size:12px">
+        <strong style="color:var(--warning)">Bruxo detectou:</strong>
+        ${plano.flags.map(f => `<div style="color:var(--muted);margin-top:4px">• ${f}</div>`).join('')}
+      </div>`;
+    }
+
+    document.getElementById('angulos-list').innerHTML = flagsHtml + angulos.map((a, i) => {
+      const isRec = a.recomendado === true;
+      const score = a.score_final || a.score_estimado || '—';
+      const recBadge = isRec ? `<span style="background:var(--success);color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px">RECOMENDADO</span>` : '';
+      const histBadge = a.historico_boost ? `<span style="font-size:10px;color:var(--accent);margin-left:6px">▲ histórico</span>` : '';
+      return `
+      <div class="card" id="angulo-card-${i}" style="background:var(--surface2);cursor:pointer;border:2px solid ${isRec ? 'var(--success)' : 'transparent'};transition:border-color 0.15s"
+           onclick="selecionarAngulo(${i})">
+        <div class="row between" style="margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-weight:600;color:var(--accent)">Ângulo ${i+1}: ${a.nome || ''}</span>
+            ${recBadge}${histBadge}
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:11px;color:var(--muted)">score: ${score}/10</span>
+            <span id="angulo-check-${i}" style="display:${isRec ? 'block' : 'none'};color:var(--success);font-weight:700">✓</span>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:3px"><strong>Tensão:</strong> ${a.tensao || ''}</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:3px"><strong>Mecanismo:</strong> ${a.mecanismo || ''}</div>
+        <div style="font-size:13px;font-style:italic;color:var(--text);margin-top:6px;padding-left:8px;border-left:2px solid var(--border)">"${a.headline_exemplo || ''}"</div>
+        ${a.motivo_recomendacao ? `<div style="font-size:11px;color:var(--success);margin-top:6px">Por quê: ${a.motivo_recomendacao}</div>` : ''}
+      </div>`;
+    }).join('');
+
+    // Auto-seleciona o recomendado
+    const recIdx = angulos.findIndex(a => a.recomendado);
+    if (recIdx >= 0) selecionarAngulo(recIdx);
+
+    toast('Ângulos gerados. Recomendado pré-selecionado.', 'success');
+    document.getElementById('btn-executar-com-angulo').disabled = false;
+
+  } catch(e) {
+    toast(`Erro: ${e.message}`, 'error');
+    document.getElementById('angulos-list').innerHTML = `<div style="color:var(--error)">${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Gerar Ângulos';
+  }
+}
+
+function selecionarAngulo(idx) {
+  _anguloSelecionado = idx;
+  document.querySelectorAll('[id^="angulo-card-"]').forEach((el, i) => {
+    el.style.borderColor = i === idx ? 'var(--accent)' : 'transparent';
+  });
+  document.querySelectorAll('[id^="angulo-check-"]').forEach((el, i) => {
+    el.style.display = i === idx ? 'block' : 'none';
+  });
+}
+
+async function executarComAngulo(semAngulo = false) {
+  if (!_currentJobClientId || !_currentJobId) { toast('Nenhum job ativo.', 'error'); return; }
+
+  const angleIndex = semAngulo ? null : _anguloSelecionado;
+  const btn = document.getElementById('btn-executar-com-angulo');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Executando...';
+
+  const resultEl = document.getElementById('job-result');
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = '<div style="color:var(--muted);font-size:13px">Agentes trabalhando... (pode levar 1-3 min)</div>';
+
+  try {
+    const body = angleIndex !== null ? { angle_index: angleIndex } : {};
+    const result = await api('POST', `/clients/${_currentJobClientId}/jobs/${_currentJobId}/run`, body);
+
+    if (result.erro) {
+      resultEl.innerHTML = `<div style="color:var(--error)">Erro: ${result.erro}</div>`;
+      toast(`Erro: ${result.erro}`, 'error');
+    } else {
+      toast('Job concluído!', 'success');
+      const clientId = _currentJobClientId;
+      const jobId = _currentJobId;
+      resultEl.innerHTML = `
+        <div class="card" style="background:var(--surface2)">
+          <div class="row between" style="margin-bottom:8px">
+            <span class="status-badge status-concluido">concluido</span>
+            <span style="font-size:11px;color:var(--muted)">${result.modelo_usado || ''}</span>
+          </div>
+          <div style="font-size:12px;font-family:monospace;color:var(--muted);margin-bottom:12px">${jobId}</div>
+          <div class="section-title" style="margin-bottom:8px">Outputs</div>
+          ${Object.entries(result.outputs || {}).map(([k,v]) => `
+            <div class="file-item">
+              <span class="file-name">${v}</span>
+              <a href="${API}/clients/${clientId}/jobs/${jobId}/file/${encodeURIComponent(v)}"
+                 target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">Download</a>
+            </div>`).join('')}
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="abrirPreview('${clientId}','${jobId}')">Preview</button>
+          </div>
+        </div>`;
+      document.getElementById('angulos-panel').style.display = 'none';
+    }
+  } catch(e) {
+    toast(e.message, 'error');
+    resultEl.innerHTML = `<div style="color:var(--error)">${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Executar com Ângulo Selecionado';
+  }
+}
+
+async function executarJob(clientId, jobId) {
+  // Compatibilidade com chamadas existentes — executa sem ângulo
+  const btn = document.getElementById('btn-run-now');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Executando...'; }
+
+  try {
+    toast('Executando job... aguarde.', 'info');
+    const result = await api('POST', `/clients/${clientId}/jobs/${jobId}/run`, {});
+
+    if (result.erro) {
+      toast(`Erro: ${result.erro}`, 'error');
+      if (btn) { btn.disabled = false; btn.innerHTML = 'Tentar novamente'; }
+    } else {
+      toast('Job concluído!', 'success');
+      const resultEl = document.getElementById('job-result');
+      if (resultEl) {
+        resultEl.innerHTML = `<div style="color:var(--success)">Concluído. <button class="btn btn-ghost btn-sm" onclick="abrirPreview('${clientId}','${jobId}')">Preview</button></div>`;
+      }
+    }
+  } catch(e) {
+    toast(e.message, 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Tentar novamente'; }
+  }
+}
+
+// ─── Registro de resultado ────────────────────────────────────────────────────
+
+function toggleResultadoForm() {
+  const f = document.getElementById('resultado-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+async function salvarResultado() {
+  if (!currentDetailClientId || !currentDetailJobId) return;
+
+  const payload = {
+    alcance:           parseInt(document.getElementById('res-alcance').value) || 0,
+    impressoes:        parseInt(document.getElementById('res-impressoes').value) || 0,
+    curtidas:          parseInt(document.getElementById('res-curtidas').value) || 0,
+    comentarios:       parseInt(document.getElementById('res-comentarios').value) || 0,
+    salvamentos:       parseInt(document.getElementById('res-salvamentos').value) || 0,
+    compartilhamentos: parseInt(document.getElementById('res-compartilhamentos').value) || 0,
+    cliques:           parseInt(document.getElementById('res-cliques').value) || 0,
+    conversoes:        parseInt(document.getElementById('res-conversoes').value) || 0,
+    tipo_conversao:    document.getElementById('res-tipo-conversao').value.trim(),
+    publicado_em:      document.getElementById('res-publicado-em').value || '',
+    notas_operador:    document.getElementById('res-notas').value.trim(),
+  };
+
+  try {
+    await api('POST', `/clients/${currentDetailClientId}/jobs/${currentDetailJobId}/result`, payload);
+    toast('Resultado registrado para aprendizado.', 'success');
+    document.getElementById('resultado-form').style.display = 'none';
+    await loadJobFiles(currentDetailClientId, currentDetailJobId);
+  } catch(e) {
+    toast(e.message, 'error');
+  }
+}
+
+async function loadJobsForClient(clientId) {
+  const area = document.getElementById('jobs-list-area');
+  const detail = document.getElementById('job-detail-panel');
+  detail.style.display = 'none';
+  currentDetailClientId = clientId;
+  await refreshClientPipelineStatus(clientId, 'jobs-pipeline-state', 'jobs');
+
+  if (!clientId) {
+    area.innerHTML = '<div class="empty-state"><p>Selecione um cliente para ver os jobs.</p></div>';
+    return;
+  }
+
+  try {
+    const jobs = await api('GET', `/clients/${clientId}/jobs`);
+    if (!jobs.length) {
+      area.innerHTML = '<div class="empty-state"><p>Nenhum job criado para este cliente.</p></div>';
+      return;
+    }
+    area.innerHTML = `<div class="jobs-list">${jobs.map(j => `
+      <div class="job-item">
+        <div class="job-meta">
+          <div class="job-title row" style="gap:8px">
+            <span class="job-tipo">${j.tipo}</span>
+            <span>${j.id}</span>
+          </div>
+          <div class="job-brief">${j.briefing || '—'}</div>
+          <div class="job-date">${fmtDate(j.criado_em)}${j.pipeline_stage ? ` • etapa ${j.pipeline_stage}` : ''}</div>
+        </div>
+        <span class="status-badge status-${j.status}">${j.status}</span>
+        <button class="btn btn-ghost btn-sm" onclick="openJobDetail('${clientId}','${j.id}')">Detalhes</button>
+      </div>
+    `).join('')}</div>`;
+  } catch(e) {
+    area.innerHTML = `<div class="empty-state"><p style="color:var(--error)">${e.message}</p></div>`;
+  }
+}
+
+async function openJobDetail(clientId, jobId) {
+  currentDetailClientId = clientId;
+  currentDetailJobId = jobId;
+  const panel = document.getElementById('job-detail-panel');
+  panel.style.display = 'block';
+
+    try {
+      const job = await api('GET', `/clients/${clientId}/jobs/${jobId}`);
+      document.getElementById('detail-job-title').textContent = `${job.tipo} — ${jobId}`;
+      document.getElementById('detail-job-subtitle').textContent = job.briefing || '';
+      const statusEl = document.getElementById('detail-job-status');
+      statusEl.textContent = job.status;
+      statusEl.className = `status-badge status-${job.status}`;
+      const errorEl = document.getElementById('detail-job-error');
+      if (errorEl) {
+        if (job.erro_mensagem) {
+          const text = job.erro_tipo ? `${job.erro_tipo}: ${job.erro_mensagem}` : job.erro_mensagem;
+          errorEl.textContent = job.erro_traceback_file ? `${text} (trace: ${job.erro_traceback_file})` : text;
+          errorEl.style.display = 'block';
+        } else {
+          errorEl.style.display = 'none';
+        }
+      }
+
+    const btnEx = document.getElementById('btn-executar-job');
+    btnEx.style.display = job.status === 'concluido' ? 'none' : 'block';
+    document.getElementById('detail-job-pipeline').textContent = `Etapa atual: ${((job.pipeline || {}).stage) || '—'} | Origem: ${((job.pipeline || {}).origem_da_execucao) || '—'}`;
+
+    await loadJobFiles(clientId, jobId);
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch(e) {
+    toast(e.message, 'error');
+  }
+}
+
+async function loadJobFiles(clientId, jobId) {
+  const area = document.getElementById('files-list-area');
+  try {
+    const files = await api('GET', `/clients/${clientId}/jobs/${jobId}/files`);
+    if (!files.length) {
+      area.innerHTML = '<p style="color:var(--muted);font-size:13px">Nenhum arquivo gerado ainda.</p>';
+      return;
+    }
+
+    // Separa imagens dos demais arquivos
+    const imgs = files.filter(f => /\.(png|jpg|jpeg|gif|webp)$/i.test(f.nome));
+    const docs = files.filter(f => !/\.(png|jpg|jpeg|gif|webp)$/i.test(f.nome));
+
+    let html = '';
+
+    // Preview de imagens no topo
+    if (imgs.length) {
+      html += `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">`;
+      for (const f of imgs) {
+        const url = `${API}/clients/${clientId}/jobs/${jobId}/file/${encodeURIComponent(f.nome)}`;
+        html += `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+            <img src="${url}" alt="${f.nome}"
+              style="max-width:200px;max-height:200px;border-radius:6px;border:1px solid var(--border);object-fit:cover;cursor:pointer"
+              onclick="window.open('${url}','_blank')"
+              onerror="this.parentElement.style.display='none'">
+            <span style="font-size:11px;color:var(--muted)">${f.nome} · ${fmtBytes(f.tamanho)}</span>
+            <a href="${url}" download="${f.nome}" class="btn btn-ghost btn-sm" style="text-decoration:none;font-size:11px">Download</a>
+          </div>`;
+      }
+      html += `</div>`;
+    }
+
+    // Lista de documentos
+    html += docs.map(f => `
+      <div class="file-item">
+        <span class="file-name">${f.nome}</span>
+        <span class="file-size">${fmtBytes(f.tamanho)}</span>
+        <a href="${API}/clients/${clientId}/jobs/${jobId}/file/${encodeURIComponent(f.nome)}"
+           target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">Download</a>
+        <button class="btn btn-ghost btn-sm" onclick="previewFile('${clientId}','${jobId}','${f.nome}')">Preview</button>
+      </div>`).join('');
+
+    area.innerHTML = html;
+  } catch(e) {
+    area.innerHTML = `<p style="color:var(--error)">${e.message}</p>`;
+  }
+}
+
+async function executarJobDetail() {
+  if (!currentDetailClientId || !currentDetailJobId) return;
+  if (!_ensureAuditSaved(currentDetailClientId)) return;
+  const btn = document.getElementById('btn-executar-job');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Executando...';
+  const statusEl = document.getElementById('detail-job-status');
+  statusEl.textContent = 'executando';
+  statusEl.className = 'status-badge status-executando';
+
+  try {
+    const result = await api('POST', `/clients/${currentDetailClientId}/jobs/${currentDetailJobId}/run`, {});
+    if (result.erro) {
+      toast(`Erro: ${result.erro}`, 'error');
+      statusEl.textContent = 'erro';
+      statusEl.className = 'status-badge status-erro';
+    } else {
+      toast('Job concluído!', 'success');
+      statusEl.textContent = 'concluido';
+      statusEl.className = 'status-badge status-concluido';
+      btn.style.display = 'none';
+      await loadJobFiles(currentDetailClientId, currentDetailJobId);
+    }
+  } catch(e) {
+    toast(e.message, 'error');
+    statusEl.textContent = 'erro';
+    statusEl.className = 'status-badge status-erro';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Executar';
+  }
+}
+
+// ─── Preview ─────────────────────────────────────────────────────────────────
+
+async function loadPreviewJobs(clientId) {
+  const sel = document.getElementById('preview-job-select');
+  sel.innerHTML = '<option value="">-- Selecionar job --</option>';
+  document.getElementById('preview-file-select').innerHTML = '<option value="">-- Selecionar arquivo --</option>';
+  document.getElementById('preview-content-area').style.display = 'none';
+  await refreshClientPipelineStatus(clientId, 'preview-pipeline-state', 'preview');
+  if (!clientId) return;
+
+  try {
+    const jobs = await api('GET', `/clients/${clientId}/jobs`);
+    sel.innerHTML = '<option value="">-- Selecionar job --</option>' +
+      jobs.map(j => `<option value="${j.id}">[${j.status}${j.pipeline_stage ? `/${j.pipeline_stage}` : ''}] ${j.id} — ${j.tipo}</option>`).join('');
+  } catch(e) { /* silencioso */ }
+}
+
+async function loadPreviewFiles(jobId) {
+  const clientId = document.getElementById('preview-client-select').value;
+  const sel = document.getElementById('preview-file-select');
+  sel.innerHTML = '<option value="">-- Selecionar arquivo --</option>';
+  document.getElementById('preview-content-area').style.display = 'none';
+  if (!clientId || !jobId) return;
+
+  try {
+    const files = await api('GET', `/clients/${clientId}/jobs/${jobId}/files`);
+    sel.innerHTML = '<option value="">-- Selecionar arquivo --</option>' +
+      files.map(f => `<option value="${f.nome}">${f.nome} (${fmtBytes(f.tamanho)})</option>`).join('');
+  } catch(e) { /* silencioso */ }
+}
+
+async function loadPreviewContent() {
+  const clientId = document.getElementById('preview-client-select').value;
+  const jobId = document.getElementById('preview-job-select').value;
+  const fname = document.getElementById('preview-file-select').value;
+  const area = document.getElementById('preview-content-area');
+  const pre = document.getElementById('preview-text');
+
+  if (!clientId || !jobId || !fname) { area.style.display = 'none'; return; }
+
+  try {
+    const r = await fetch(`${API}/clients/${clientId}/jobs/${jobId}/file/${encodeURIComponent(fname)}`);
+    const text = await r.text();
+    pre.textContent = text;
+    area.style.display = 'block';
+  } catch(e) {
+    pre.textContent = `Erro ao carregar: ${e.message}`;
+    area.style.display = 'block';
+  }
+}
+
+function downloadPreviewFile() {
+  const clientId = document.getElementById('preview-client-select').value;
+  const jobId = document.getElementById('preview-job-select').value;
+  const fname = document.getElementById('preview-file-select').value;
+  if (!clientId || !jobId || !fname) { toast('Selecione um arquivo primeiro.', 'error'); return; }
+  window.open(`${API}/clients/${clientId}/jobs/${jobId}/file/${encodeURIComponent(fname)}`, '_blank');
+}
+
+async function previewFile(clientId, jobId, fname) {
+  // Switch to preview tab
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===4));
+  document.querySelectorAll('.tab-panel').forEach((p,i) => p.classList.toggle('active', i===4));
+
+  await populateClientSelect('preview-client-select');
+  document.getElementById('preview-client-select').value = clientId;
+  await loadPreviewJobs(clientId);
+  document.getElementById('preview-job-select').value = jobId;
+  await loadPreviewFiles(jobId);
+  document.getElementById('preview-file-select').value = fname;
+  await loadPreviewContent();
+}
+
+async function abrirPreview(clientId, jobId) {
+  await previewFile(clientId, jobId, 'manifest.json');
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+
+loadClients();
+fetchFormats().then(() => populateJobFormats());
+document.getElementById('job-tipo').addEventListener('change', () => {
+  populateJobFormats();
+  updateJobOutputHint();
+});
+updateJobOutputHint();
+</script>
+</body>
+</html>
